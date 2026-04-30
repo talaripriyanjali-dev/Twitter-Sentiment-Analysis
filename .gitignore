@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.py[cod]
+
+.streamlit/
+.env
+.env.*
+
+training.1600000.processed.noemoticon.csv
+
+.ipynb_checkpoints/
