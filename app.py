@@ -18,6 +18,114 @@ NITTER_INSTANCES = [
 ]
 
 
+def apply_custom_theme():
+    st.markdown(
+        """
+        <style>
+            :root {
+                --bg: #f7faf9;
+                --panel: #ffffff;
+                --text: #17313b;
+                --muted: #5d6f77;
+                --primary: #087f8c;
+                --primary-dark: #066772;
+                --accent: #f45b69;
+                --border: #d8e5e4;
+            }
+
+            .stApp {
+                background:
+                    linear-gradient(135deg, rgba(8, 127, 140, 0.10), rgba(244, 91, 105, 0.08)),
+                    var(--bg);
+                color: var(--text);
+            }
+
+            .block-container {
+                max-width: 920px;
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+
+            h1 {
+                color: var(--text);
+                font-weight: 800;
+                letter-spacing: 0;
+                padding-bottom: 0.25rem;
+                border-bottom: 4px solid var(--accent);
+                display: inline-block;
+            }
+
+            label, .stMarkdown, .stTextInput label, .stTextArea label, .stSelectbox label {
+                color: var(--text) !important;
+            }
+
+            div[data-baseweb="select"] > div,
+            .stTextInput input,
+            .stTextArea textarea {
+                background-color: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text);
+            }
+
+            .stTextArea textarea:focus,
+            .stTextInput input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 2px rgba(8, 127, 140, 0.16);
+            }
+
+            .stButton > button {
+                background-color: var(--primary);
+                border: 1px solid var(--primary);
+                border-radius: 8px;
+                color: #ffffff;
+                font-weight: 700;
+                padding: 0.55rem 1.2rem;
+                transition: background-color 120ms ease, border-color 120ms ease;
+            }
+
+            .stButton > button:hover {
+                background-color: var(--primary-dark);
+                border-color: var(--primary-dark);
+                color: #ffffff;
+            }
+
+            .sentiment-card {
+                border-radius: 8px;
+                margin: 14px 0;
+                padding: 16px 18px;
+                border: 1px solid;
+                box-shadow: 0 8px 24px rgba(23, 49, 59, 0.08);
+            }
+
+            .sentiment-card h5 {
+                margin: 0 0 8px 0;
+                color: var(--text);
+                font-size: 1rem;
+                font-weight: 800;
+            }
+
+            .sentiment-card p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.5;
+            }
+
+            .sentiment-positive {
+                background-color: #e7f7ef;
+                border-color: #9fd8b7;
+            }
+
+            .sentiment-negative {
+                background-color: #fff0f2;
+                border-color: #f5a7b0;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 @st.cache_resource
 def load_stopwords():
     nltk.download("stopwords")
@@ -140,17 +248,19 @@ def try_nitter_profile(session, instance, username, headers, limit, errors):
 
 
 def create_card(tweet_text, sentiment):
-    color = "green" if sentiment == "Positive" else "red"
+    sentiment_class = "sentiment-positive" if sentiment == "Positive" else "sentiment-negative"
     card_html = f"""
-    <div style="background-color: {color}; padding: 10px; border-radius: 5px; margin: 10px 0;">
-        <h5 style="color: white;">{sentiment} Sentiment</h5>
-        <p style="color: white;">{escape(tweet_text)}</p>
+    <div class="sentiment-card {sentiment_class}">
+        <h5>{sentiment} Sentiment</h5>
+        <p>{escape(tweet_text)}</p>
     </div>
     """
     return card_html
 
 
 def main():
+    st.set_page_config(page_title="Twitter Sentiment Analysis", page_icon="@", layout="centered")
+    apply_custom_theme()
     st.title("Twitter Sentiment Analysis")
 
     stop_words = load_stopwords()
